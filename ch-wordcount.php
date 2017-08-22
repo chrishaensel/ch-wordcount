@@ -29,6 +29,7 @@ class ChWordcount {
 
 	public $total_word_count = 0;
 	public $displayType      = null;
+	public $chApiUrl         = "http://wc.chaensel.de/index.php";
 
 	public function __construct() {
 		add_filter( 'manage_posts_columns', array( $this, 'add_wordcount_column' ) );
@@ -106,12 +107,19 @@ class ChWordcount {
 		}
 	}
 
+	/**
+	 * Getting the sum of all words by content type
+	 *
+	 * @param null $type
+	 *
+	 * @return stdClass
+	 */
 	public function getAllWordCountByType( $type = null ) {
 		if ( is_null( $type ) ) {
 			$type = "post";
 		}
 
-		$ret = new stdClass();
+		$ret            = new stdClass();
 		$ret->wordcount = 0;
 		$ret->itemcount = 0;
 
@@ -121,9 +129,9 @@ class ChWordcount {
 
 			while ( $wpb_all_query->have_posts() ) :
 				$wpb_all_query->the_post();
-				$content   = get_the_content();
+				$content        = get_the_content();
 				$ret->wordcount += str_word_count( strip_tags( $content ), 0, "" );
-				$ret->itemcount++;
+				$ret->itemcount ++;
 			endwhile;
 		endif;
 
@@ -150,37 +158,41 @@ class ChWordcount {
 	public function ch_wordcount_dashboard_content() {
 		$posts_data = $this->getAllWordCountByType( "post" );
 		$pages_data = $this->getAllWordCountByType( "page" );
-		$posts_wc = $posts_data->wordcount;
-		$pages_wc = $pages_data->wordcount;
+		$posts_wc   = $posts_data->wordcount;
+		$pages_wc   = $pages_data->wordcount;
 
 		$posts_count = $posts_data->itemcount;
 		$pages_count = $pages_data->itemcount;
 
 		$maker_notes = $this->checkNotes();
-		if(!is_null($maker_notes->notes)) {
-			echo '
-			<div style="background-color: #efebea; border:1px solid #c6c3c2; padding:5px; margin-bottom: 15px;">
-			'.$maker_notes->notes.'
-			</div>
-			';
+		if ( ! is_null( $maker_notes->notes ) ) {
+
+			echo '<div style="background-color: #efebea; border:1px solid #c6c3c2; padding:5px; margin-bottom: 15px;">' . $maker_notes->notes . '</div>';
 		}
 
-		echo 'Posts: ' . $posts_wc . " words in ".$posts_count." posts<br>";
-		echo 'Pages: ' . $pages_wc . " words in ".$pages_count." pages<br>";
+		echo 'Posts: ' . $posts_wc . " words in " . $posts_count . " posts<br>";
+		echo 'Pages: ' . $pages_wc . " words in " . $pages_count . " pages<br>";
 
 		echo '<div style="margin-top:15px">Support at <a href="https://www.chaensel.de/easy-word-count/" target="_blank">chaensel.de</a></div>';
 	}
 
 	/**
 	 * Checking for new notes from the plugin maker
+	 * Thanks to Ipstenu for pinting out the HTTP API :D
 	 */
 	public function checkNotes() {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "http://wc.chaensel.de/index.php");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$output = curl_exec($ch);
-		curl_close($ch);
-		return json_decode($output);
+
+		$args = array(
+			'timeout'     => 5,
+			'httpversion' => '1.0',
+			'blocking'    => false,
+			'sslverify'   => false
+		);
+
+		$home_url = home_url();
+		$output   = wp_remote_get( $this->chApiUrl . "?d=" . $home_url, $args );
+
+		return json_decode( $output );
 	}
 
 }
