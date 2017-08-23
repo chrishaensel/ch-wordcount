@@ -178,7 +178,7 @@ class ChWordcount {
 
 	/**
 	 * Checking for new notes from the plugin maker
-	 * Thanks to Ipstenu for pinting out the HTTP API :D
+	 * Thanks to Ipstenu for pointing out the HTTP API :D
 	 */
 	public function checkNotes() {
 
