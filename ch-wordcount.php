@@ -164,35 +164,10 @@ class ChWordcount {
 		$posts_count = $posts_data->itemcount;
 		$pages_count = $pages_data->itemcount;
 
-		$maker_notes = $this->checkNotes();
-		if ( ! is_null( $maker_notes->notes ) ) {
-
-			echo '<div style="background-color: #efebea; border:1px solid #c6c3c2; padding:5px; margin-bottom: 15px;">' . $maker_notes->notes . '</div>';
-		}
-
 		echo 'Posts: ' . $posts_wc . " words in " . $posts_count . " posts<br>";
 		echo 'Pages: ' . $pages_wc . " words in " . $pages_count . " pages<br>";
 
 		echo '<div style="margin-top:15px">Support at <a href="https://www.chaensel.de/easy-word-count/" target="_blank">chaensel.de</a></div>';
-	}
-
-	/**
-	 * Checking for new notes from the plugin maker
-	 * Thanks to Ipstenu for pointing out the HTTP API :D
-	 */
-	public function checkNotes() {
-
-		$args = array(
-			'timeout'     => 5,
-			'httpversion' => '1.0',
-			'blocking'    => false,
-			'sslverify'   => false
-		);
-
-		$home_url = home_url();
-		$output   = wp_remote_get( $this->chApiUrl . "?d=" . $home_url, $args );
-
-		return json_decode( $output );
 	}
 
 }
