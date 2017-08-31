@@ -6,7 +6,7 @@ Plugin Name: CH Easy Word Count
 Plugin URI: https://www.chaensel.de/easy-word-count/
 Description: Displays the word count of posts and pages in the overview tables. Also adds a dashboard widget.
 Author: Christian Hänsel
-Version: 1.0
+Version: 1.2
 Author URI: https://chaensel.de
 Text Domain: ch-wordcount
 License:     GPLv2
@@ -100,7 +100,7 @@ class ChWordcount {
 			add_action( 'in_admin_footer', function () {
 				echo '
 				<div class="postbox" id="total_word_count" style="padding: 5px 10px">	
-				        Total Word Count in ' . $this->displayType . ': ' . $this->total_word_count . '
+				        ' . __( 'Total Word Count in', 'ch-wordcount' ) . $this->displayType . ': ' . $this->total_word_count . '
 				</div>
 				';
 			} );
@@ -149,7 +149,7 @@ class ChWordcount {
 	public function ch_custom_dashboard_widgets() {
 		global $wp_meta_boxes;
 
-		wp_add_dashboard_widget( 'custom_help_widget', 'CH Easy Word Count', array( $this, 'ch_wordcount_dashboard_content' ) );
+		wp_add_dashboard_widget( 'custom_help_widget', __( 'CH Easy Word Count', 'ch-wordcount' ), array( $this, 'ch_wordcount_dashboard_content' ) );
 	}
 
 	/**
@@ -164,10 +164,13 @@ class ChWordcount {
 		$posts_count = $posts_data->itemcount;
 		$pages_count = $pages_data->itemcount;
 
-		echo 'Posts: ' . $posts_wc . " words in " . $posts_count . " posts<br>";
-		echo 'Pages: ' . $pages_wc . " words in " . $pages_count . " pages<br>";
+		echo __( 'Posts', 'ch-wordcount' ) . ': ' . $posts_wc . " " . __( "words in", "ch-wordcount" ) . " " . $posts_count . " " . __( 'Posts', 'ch-wordcount' ) . "<br>";
+		echo __( 'Pages', 'ch-wordcount' ) . ': ' . $pages_wc . " " . __( "words in", "ch-wordcount" ) . " " . $pages_count . " " . __( 'Pages', 'ch-wordcount' ) . "<br>";
 
-		echo '<div style="margin-top:15px">Support at <a href="https://www.chaensel.de/easy-word-count/" target="_blank">chaensel.de</a></div>';
+		echo '<div style="margin-top:15px">';
+		echo __( 'Support at', 'ch-wordcount' );
+		echo ' <a href="https://www.chaensel.de/easy-word-count/" target="_blank">chaensel.de</a>';
+		echo '</div>';
 	}
 
 }
